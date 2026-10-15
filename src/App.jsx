@@ -1,7 +1,7 @@
 import { lazy, Suspense, useState, useEffect, useCallback, useRef } from "react";
 import { Routes, Route, useNavigate, useParams } from "react-router-dom";
 import "./App.css";
-import logo from "./assets/logo.png";
+import logo from "./assets/Logo.png";
 import heroBg from "./assets/hero-bg.jpg";
 import prpImg from "./assets/prp.jpg";
 import gfcImg from "./assets/gfc.jpg";
