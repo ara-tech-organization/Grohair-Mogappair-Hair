@@ -1,0 +1,18 @@
+<IfModule mod_mime.c>
+  AddType video/mp4 .mp4
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.mp4$">
+    Header set Accept-Ranges bytes
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /hair-growth-solutions/
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /hair-growth-solutions/index.html [L]
+</IfModule>
