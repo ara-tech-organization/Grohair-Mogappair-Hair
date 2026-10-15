@@ -4,8 +4,8 @@ import react from '@vitejs/plugin-react'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/hair-growth-solutions/',
+  base: process.env.VITE_BASE || '/Grohair-Mogappair-Hair/',
   build: {
-    outDir: "hair-growth-solutions"
+    outDir: "dist"
   }
 })
