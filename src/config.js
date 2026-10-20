@@ -40,5 +40,5 @@ export const FORM = {
     };
   },
   // Existing GTM event name, if the old site pushes one.
-  gtmEvent: 'form_submit',
+  gtmEvent: 'lead_form_submitted',
 };

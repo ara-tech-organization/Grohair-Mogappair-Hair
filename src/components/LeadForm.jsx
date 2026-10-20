@@ -48,7 +48,7 @@ export default function LeadForm({ variant = 'date', id, submitLabel, dark = fal
       const res = await fetch(FORM.apiUrl, { method: 'POST', headers, body });
       if (!res.ok) throw new Error(`Request failed (${res.status})`);
       window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({ event: FORM.gtmEvent, form_location: variant === 'date' ? 'hero' : 'footer' });
+      window.dataLayer.push({ event: FORM.gtmEvent, form_location: id });
       if (FORM.thankYouPath) { window.location.assign(FORM.thankYouPath); return; }
       setStatus('success');
     } catch (err) {
