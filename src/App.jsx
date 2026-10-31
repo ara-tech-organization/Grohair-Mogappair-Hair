@@ -137,7 +137,7 @@ function Header({ active }) {
   return (
     <header className="fixed inset-x-0 top-0 z-40">
       <div className={`w-full border-b bg-white/95 backdrop-blur transition-shadow duration-300 ${solid || open ? 'border-line shadow-soft' : 'border-line/60'}`}>
-        <div className="flex h-20 w-full items-center justify-between px-4 xs:px-5 sm:px-8 lg:px-12">
+        <div className="flex h-16 w-full items-center justify-between sm:h-20 px-4 xs:px-5 sm:px-8 lg:px-12">
           <a href="#top" className="flex items-center" aria-label={`${CLINIC.name} home`}>
             <img src={logoUrl} alt={CLINIC.name} className="h-10 w-auto sm:h-12" />
           </a>
@@ -172,10 +172,10 @@ function Header({ active }) {
 
 function Hero() {
   return (
-    <section id="top" className="relative overflow-hidden bg-ink pt-32 text-white">
+    <section id="top" className="relative overflow-hidden bg-ink pt-16 text-white sm:pt-20">
       <div className="pointer-events-none absolute -left-40 top-10 h-[34rem] w-[34rem] rounded-full bg-crimson-700/30 blur-3xl" aria-hidden />
       <div className="pointer-events-none absolute -right-32 bottom-0 h-[28rem] w-[28rem] rounded-full bg-crimson-500/20 blur-3xl" aria-hidden />
-      <div className="relative mx-auto grid max-w-6xl 2xl:max-w-7xl items-center gap-12 px-5 pb-20 pt-10 lg:grid-cols-[1.35fr_1fr] lg:pb-28 lg:pt-16">
+      <div className="relative mx-auto grid max-w-6xl 2xl:max-w-7xl items-center gap-12 lg:items-start px-5 pb-16 pt-6 lg:grid-cols-[1.35fr_1fr] lg:pb-24 lg:pt-8">
         <div>
           <p className="rise inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-1.5 text-xs font-medium tracking-wide text-blush-200 xs:text-sm" style={{ animationDelay: '.1s' }}>
             <MapPin size={15} className="text-crimson-500" aria-hidden /> ADVANCED HAIR TREATMENT CLINIC
@@ -377,7 +377,7 @@ function Footer() {
   const ico = 'mt-0.5 shrink-0';
   const head = 'mb-1 text-xs font-medium uppercase tracking-[0.22em] text-white';
   return (
-    <footer id="contact" className="bg-ink py-12 text-white sm:py-14">
+    <footer id="contact" className="bg-ink py-12 pb-28 text-white sm:py-14 sm:pb-14">
       <div className="mx-auto grid max-w-6xl 2xl:max-w-7xl gap-8 px-4 xs:px-5 sm:gap-10 md:grid-cols-2 lg:grid-cols-[1.1fr_1.3fr_0.8fr_1.2fr]">
         <div>
           <img src={logoUrl} alt={CLINIC.name} className="h-20 w-auto rounded-xl bg-white p-1.5" />
@@ -411,6 +411,17 @@ function Footer() {
   );
 }
 
+/** Mobile-only sticky bar: call + book appointment. */
+function StickyCta() {
+  if (!CLINIC.phone) return null;
+  return (
+    <div className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-2 gap-3 border-t border-line bg-white/95 px-4 py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.08)] backdrop-blur sm:hidden" style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}>
+      <a href={`tel:${CLINIC.phone}`} onClick={trackCall} className={`${btnGhost} !px-3 !py-3 text-sm`}><Phone size={17} aria-hidden />Call Now</a>
+      <a href="#book" className={`${btnSolid} !px-3 !py-3 text-sm`}>Book Appointment</a>
+    </div>
+  );
+}
+
 export default function App() {
   const active = useSectionRouting();
   const [formDone, setFormDone] = useState(false);
@@ -429,6 +440,7 @@ export default function App() {
         <FinalCta />
       </main>
       <Footer />
+      <StickyCta />
       <FormPopup onClose={() => setFormDone(true)} />
       <CallPopup ready={formDone} />
     </>

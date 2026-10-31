@@ -4,7 +4,7 @@ import { CLINIC } from '../config.js';
 
 const OFFER_SECONDS = 10 * 60;
 
-/** Centered call modal. Opens right after the form popup is closed (`ready`), on every page load.
+/** Centered call modal. Opens 5 seconds after the form popup is closed (`ready`), on every page load.
  *  Shows a 10-minute countdown for the free consultation. */
 export default function CallPopup({ ready = false }) {
   const [open, setOpen] = useState(false);
@@ -12,7 +12,7 @@ export default function CallPopup({ ready = false }) {
 
   useEffect(() => {
     if (!CLINIC.phone || !ready) return;
-    const t = setTimeout(() => setOpen(true), 400);
+    const t = setTimeout(() => setOpen(true), 5000);
     return () => clearTimeout(t);
   }, [ready]);
 
