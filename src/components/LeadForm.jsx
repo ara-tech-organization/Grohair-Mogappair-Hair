@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { ArrowRight, CalendarDays, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
-import { FORM } from '../config.js';
+import { useEffect, useRef, useState } from 'react';
+import { ArrowRight, Loader2, CheckCircle2, AlertCircle, Check, ChevronDown } from 'lucide-react';
+import { FORM, HAIR_CONCERNS } from '../config.js';
 
 const PHONE_RE = /^(?:\+?91)?[6-9]\d{9}$/;
 
@@ -19,9 +19,45 @@ function encode(payload, format) {
   return { body: JSON.stringify(payload), headers: { 'Content-Type': 'application/json' } };
 }
 
-/** variant="date": name, mobile, optional date. variant="concern": name, mobile, hair concern. */
-export default function LeadForm({ variant = 'date', id, submitLabel, dark = false }) {
-  const [values, setValues] = useState({ name: '', phone: '', city: '', date: '', concern: '' });
+/** Single-select dropdown; picking an option selects it and closes the list. */
+function SelectField({ id, options, value, onChange, invalid, describedBy, fieldClass }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+  useEffect(() => {
+    if (!open) return;
+    const away = (e) => ref.current && !ref.current.contains(e.target) && setOpen(false);
+    const esc = (e) => e.key === 'Escape' && setOpen(false);
+    document.addEventListener('mousedown', away);
+    document.addEventListener('keydown', esc);
+    return () => { document.removeEventListener('mousedown', away); document.removeEventListener('keydown', esc); };
+  }, [open]);
+  return (
+    <div ref={ref} className="relative">
+      <button type="button" id={id} aria-haspopup="listbox" aria-expanded={open} aria-invalid={invalid} aria-describedby={describedBy}
+        onClick={() => setOpen((o) => !o)}
+        className={`${fieldClass} flex items-center justify-between gap-2 text-left ${invalid ? 'border-red-500' : 'border-ink/15'}`}>
+        <span className={`truncate ${value ? 'text-ink' : 'text-ink/40'}`}>{value || 'Select your hair concern'}</span>
+        <ChevronDown size={18} aria-hidden className={`shrink-0 text-ink/50 transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+      {open && (
+        <ul role="listbox" className="absolute z-20 mt-1.5 w-full overflow-hidden rounded-xl border border-ink/15 bg-white text-ink shadow-soft">
+          {options.map((o) => (
+            <li key={o} role="option" aria-selected={o === value}>
+              <button type="button" onClick={() => { onChange(o); setOpen(false); }}
+                className={`flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-blush-50 ${o === value ? 'font-medium text-crimson-700' : ''}`}>
+                {o}{o === value && <Check size={16} aria-hidden />}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+/** Name, mobile, city and a single-select hair concern. */
+export default function LeadForm({ id, submitLabel, dark = false }) {
+  const [values, setValues] = useState({ name: '', phone: '', city: '', concern: '' });
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState('idle'); // idle | loading | success | error
 
@@ -32,7 +68,7 @@ export default function LeadForm({ variant = 'date', id, submitLabel, dark = fal
     if (values.name.trim().length < 2) e.name = 'Enter your full name.';
     if (!PHONE_RE.test(values.phone.replace(/[\s-]/g, ''))) e.phone = 'Enter a valid 10-digit mobile number.';
     if (values.city.trim().length < 2) e.city = 'Enter your city.';
-    if (variant === 'concern' && !values.concern.trim()) e.concern = 'Tell us your hair concern.';
+    if (!values.concern) e.concern = 'Select your hair concern.';
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -46,7 +82,9 @@ export default function LeadForm({ variant = 'date', id, submitLabel, dark = fal
       const payload = FORM.buildPayload({ ...values, name: values.name.trim(), city: values.city.trim(), phone: values.phone.replace(/[\s-]/g, '') });
       const { body, headers } = encode(payload, FORM.format);
       const res = await fetch(FORM.apiUrl, { method: 'POST', headers, body });
-      if (!res.ok) throw new Error(`Request failed (${res.status})`);
+      let json = null;
+      try { json = JSON.parse(await res.text()); } catch { /* non-JSON response */ }
+      if (!FORM.isSuccess(res, json)) throw new Error(`Request failed (${res.status})`);
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({ event: FORM.gtmEvent, form_location: id });
       if (FORM.thankYouPath) { window.location.assign(FORM.thankYouPath); return; }
@@ -97,23 +135,12 @@ export default function LeadForm({ variant = 'date', id, submitLabel, dark = fal
           value={values.city} onChange={set('city')} aria-invalid={!!errors.city} aria-describedby={errors.city ? `${id}-city-err` : undefined} />
         {err('city')}
       </div>
-      {variant === 'date' ? (
-        <div>
-          <label htmlFor={`${id}-date`} className={label}>
-            <CalendarDays size={15} className="mr-1 inline -mt-0.5" aria-hidden />Preferred appointment date <span className="font-normal opacity-70">(optional)</span>
-          </label>
-          <input id={`${id}-date`} type="date" min={new Date().toISOString().split('T')[0]} className={`${field} border-ink/15`}
-            value={values.date} onChange={set('date')} />
-        </div>
-      ) : (
-        <div>
-          <label htmlFor={`${id}-concern`} className={label}>Hair concern</label>
-          <input id={`${id}-concern`} placeholder="For example: hair fall, thinning, bald patches"
-            className={`${field} ${errors.concern ? 'border-red-500' : 'border-ink/15'}`}
-            value={values.concern} onChange={set('concern')} aria-invalid={!!errors.concern} aria-describedby={errors.concern ? `${id}-concern-err` : undefined} />
-          {err('concern')}
-        </div>
-      )}
+      <div>
+        <label htmlFor={`${id}-concern`} className={label}>Hair concern</label>
+        <SelectField id={`${id}-concern`} options={HAIR_CONCERNS} value={values.concern} onChange={(v) => setValues((x) => ({ ...x, concern: v }))} fieldClass={field}
+          invalid={!!errors.concern} describedBy={errors.concern ? `${id}-concern-err` : undefined} />
+        {err('concern')}
+      </div>
       <button type="submit" disabled={status === 'loading'}
         className={`group flex w-full items-center justify-center gap-2 rounded-xl px-5 py-3.5 font-medium transition disabled:opacity-70 ${dark ? 'bg-white text-crimson-800 hover:bg-blush' : 'grad-crimson text-white shadow-glow hover:brightness-110'}`}>
         {status === 'loading' ? (<><Loader2 className="animate-spin" size={18} aria-hidden /> Sending…</>) : (<>{submitLabel}<ArrowRight size={18} className="transition-transform group-hover:translate-x-1" aria-hidden /></>)}

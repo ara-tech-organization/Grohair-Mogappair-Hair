@@ -5,7 +5,7 @@ import { resolve } from 'node:path';
 
 // Production site lives under /hair/ on the existing domain.
 // `vite build --mode ghpages` builds for the GitHub Pages project URL instead (see "deploy" script).
-const GH_REPO = 'Grohair-kovilambakkam-hair';
+const GH_REPO = 'Grohair-Mogappair-Hair';
 
 export default defineConfig(({ mode }) => ({
   base: mode === 'ghpages' ? `/${GH_REPO}/` : '/hair/',

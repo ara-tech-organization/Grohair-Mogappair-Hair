@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react';
-import { Phone, X } from 'lucide-react';
+import { Clock, Phone, X } from 'lucide-react';
 import { CLINIC } from '../config.js';
 
-/** Centered call modal. Opens right after the form popup is closed (`ready`), on every page load. */
+const OFFER_SECONDS = 10 * 60;
+
+/** Centered call modal. Opens right after the form popup is closed (`ready`), on every page load.
+ *  Shows a 10-minute countdown for the free consultation. */
 export default function CallPopup({ ready = false }) {
   const [open, setOpen] = useState(false);
+  const [left, setLeft] = useState(OFFER_SECONDS);
 
   useEffect(() => {
     if (!CLINIC.phone || !ready) return;
@@ -12,7 +16,16 @@ export default function CallPopup({ ready = false }) {
     return () => clearTimeout(t);
   }, [ready]);
 
+  useEffect(() => {
+    if (!open) return;
+    setLeft(OFFER_SECONDS);
+    const t = setInterval(() => setLeft((s) => Math.max(0, s - 1)), 1000);
+    return () => clearInterval(t);
+  }, [open]);
+
   const close = () => setOpen(false);
+  const mm = String(Math.floor(left / 60)).padStart(2, '0');
+  const ss = String(left % 60).padStart(2, '0');
 
   useEffect(() => {
     if (!open) return;
@@ -37,7 +50,20 @@ export default function CallPopup({ ready = false }) {
         </div>
         <h2 id="call-title" className="text-xl font-semibold leading-snug">Call Advanced GroHair &amp; GloSkin</h2>
         <p className="mt-1.5 text-sm text-ink-muted">Our hair experts are just a call away</p>
-        <p className="mt-5 text-[1.7rem] font-bold tracking-tight text-crimson-700">{CLINIC.phoneDisplay || CLINIC.phone}</p>
+        <div className="mt-4 rounded-2xl bg-blush-50 px-4 py-3">
+          <p className="flex items-center justify-center gap-1.5 text-sm font-semibold text-crimson-800">
+            <Clock size={15} aria-hidden /> Free Consultation
+          </p>
+          {left > 0 ? (
+            <>
+              <p className="mt-0.5 text-xs text-ink-muted">Call within the next 10 minutes</p>
+              <p role="timer" aria-label={`${mm} minutes ${ss} seconds left`} className="mt-1 font-mono text-3xl font-bold tabular-nums text-crimson-700">{mm}:{ss}</p>
+            </>
+          ) : (
+            <p className="mt-1 text-xs text-ink-muted">Timer ended. Call us to check the current offer.</p>
+          )}
+        </div>
+        <p className="mt-4 text-[1.7rem] font-bold tracking-tight text-crimson-700">{CLINIC.phoneDisplay || CLINIC.phone}</p>
         <a href={`tel:${CLINIC.phone}`} onClick={close} className="grad-crimson mt-5 flex items-center justify-center gap-2 rounded-2xl px-4 py-4 text-sm font-bold uppercase tracking-wide text-white shadow-glow transition hover:brightness-110">
           <Phone size={17} aria-hidden /> Call Now
         </a>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { ArrowRight, CheckCircle2, ClipboardList, Layers, MapPin, Mail, Menu, Phone, Plus, Sparkles, Stethoscope, X } from 'lucide-react';
-import { CLINIC } from './config.js';
+import { ArrowRight, CheckCircle2, ClipboardList, Layers, MapPin, Mail, Menu, Phone, Plus, Sparkles, Star, Stethoscope, X } from 'lucide-react';
+import { CLINIC, REVIEWS } from './config.js';
 import logoUrl from './assets/logo.png';
 import LeadForm from './components/LeadForm.jsx';
 import CallPopup from './components/CallPopup.jsx';
@@ -8,7 +8,7 @@ import FormPopup from './components/FormPopup.jsx';
 import Strands from './components/Strands.jsx';
 import Gallery from './components/Gallery.jsx';
 
-const NAV = [['Treatments', '#treatments'], ['Concerns', '#concerns'], ['Process', '#process'], ['FAQ', '#faq'], ['Contact', '#contact']];
+const NAV = [['Treatments', '#treatments'], ['Concerns', '#concerns'], ['Process', '#process'], ['Reviews', '#reviews'], ['FAQ', '#faq'], ['Contact', '#contact']];
 
 const CONCERNS = [
   ['Hair fall', 'Explore treatment options for excessive hair shedding and selected hair loss concerns.'],
@@ -114,6 +114,8 @@ function useSectionRouting() {
   return active;
 }
 
+const trackCall = () => { window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: 'contact_click', channel: 'phone' }); };
+
 const btnSolid ='grad-crimson inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 font-medium text-white shadow-glow transition hover:brightness-110';
 const btnGhost = 'inline-flex items-center justify-center gap-2 rounded-full border border-crimson-700 px-6 py-3 font-medium text-crimson-700 transition hover:bg-crimson-700 hover:text-white';
 
@@ -146,7 +148,8 @@ function Header({ active }) {
             })}
           </nav>
           <div className="flex items-center gap-3">
-            {CLINIC.phone && <a href={`tel:${CLINIC.phone}`} className="hidden items-center gap-2 text-sm font-medium text-ink md:flex"><Phone size={16} className="text-crimson-700" aria-hidden />{CLINIC.phoneDisplay}</a>}
+            {CLINIC.phone && <a href={`tel:${CLINIC.phone}`} onClick={trackCall} className="hidden items-center gap-2 text-sm font-medium text-ink md:flex"><Phone size={16} className="text-crimson-700" aria-hidden />{CLINIC.phoneDisplay}</a>}
+            {CLINIC.phone && <a href={`tel:${CLINIC.phone}`} onClick={trackCall} aria-label="Call us" className="grad-crimson grid h-10 w-10 place-items-center rounded-full text-white md:hidden"><Phone size={18} aria-hidden /></a>}
             <a href="#book" className={`${btnSolid} hidden !py-2.5 text-sm xs:inline-flex`}>Book consultation</a>
             <button className="rounded-full p-2 text-ink lg:hidden" onClick={() => setOpen(!open)} aria-expanded={open} aria-label="Toggle menu">
               {open ? <X size={24} aria-hidden /> : <Menu size={24} aria-hidden />}
@@ -178,10 +181,10 @@ function Hero() {
             <MapPin size={15} className="text-crimson-500" aria-hidden /> ADVANCED HAIR TREATMENT CLINIC
           </p>
           <h1 className="rise mt-6 max-w-2xl text-[2rem] font-medium leading-[1.15] xs:text-4xl sm:text-5xl lg:text-[3.3rem] 2xl:text-[3.7rem]" style={{ animationDelay: '.25s' }}>
-            Advanced Hair Fall Treatment &amp; Hair Restoration in <em className="grad-text pr-2">Chennai</em>
+            Advanced Hair Fall Treatment &amp; Hair Restoration in <em className="grad-text pr-2">Mogappair</em>
           </h1>
           <p className="rise mt-6 max-w-xl text-lg leading-relaxed text-blush-200/85" style={{ animationDelay: '.4s' }}>
-            Explore advanced hair regrowth, hair restoration and hair transplant options at Advanced GroHair &amp; GloSkin, Kovilambakkam.
+            Explore advanced hair regrowth, hair restoration and hair transplant options at Advanced GroHair &amp; GloSkin, Mogappair.
           </p>
           <ul className="rise mt-9 space-y-3" style={{ animationDelay: '.55s' }}>
             {['Advanced Hair Regrowth Treatments', 'Non-Surgical Hair Restoration Options', 'Hair Transplant Solutions'].map((t) => (
@@ -198,7 +201,7 @@ function Hero() {
           <span className="grad-crimson absolute inset-x-10 top-0 h-1 rounded-b-full" aria-hidden />
           <h2 className="text-2xl font-medium text-ink xs:text-3xl">Book Your Hair Consultation</h2>
           <p className="mb-6 mt-2 text-ink-body">Share your details to enquire about suitable hair treatment options.</p>
-          <LeadForm id="hero" variant="date" submitLabel="Book my consultation" />
+          <LeadForm id="hero" submitLabel="Book my consultation" />
         </div>
       </div>
     </section>
@@ -209,9 +212,9 @@ function Concerns() {
   return (
     <section id="concerns" className="mx-auto grid max-w-6xl 2xl:max-w-7xl gap-14 px-4 py-16 xs:px-5 sm:py-24 lg:grid-cols-[1fr_1.4fr]">
       <div className="lg:sticky lg:top-28 lg:self-start">
-        <Heading eyebrow="Concerns">Looking for hair treatment in Kovilambakkam, Chennai?</Heading>
+        <Heading eyebrow="Concerns">Looking for hair treatment in Mogappair, Chennai?</Heading>
         <p className="mt-6 max-w-md leading-relaxed text-ink-body">At Advanced GroHair &amp; GloSkin, we offer a range of hair restoration and regrowth treatment options for different hair loss concerns. From hair thinning and excessive hair fall to bald patches and hair restoration, explore available treatments based on your individual requirements.</p>
-        <p className="mt-4 max-w-md leading-relaxed text-ink-body">Visit our Kovilambakkam clinic to discuss your concerns and understand the treatment options that may be suitable for you.</p>
+        <p className="mt-4 max-w-md leading-relaxed text-ink-body">Visit our Mogappair clinic to discuss your concerns and understand the treatment options that may be suitable for you.</p>
         <a href="#book" className={`${btnSolid} mt-8`}>Enquire Now <ArrowRight size={18} aria-hidden /></a>
       </div>
       <div>
@@ -311,6 +314,28 @@ function Process() {
   );
 }
 
+function Reviews() {
+  return (
+    <section id="reviews" className="bg-blush-100 py-16 sm:py-24">
+      <div className="mx-auto max-w-6xl 2xl:max-w-7xl px-4 xs:px-5">
+        <Heading eyebrow="Patient Reviews" className="max-w-2xl">Real experiences from real people</Heading>
+        <div className="mt-12 grid gap-5 md:grid-cols-2">
+          {REVIEWS.map((r) => (
+            <figure key={r.name} className="flex flex-col rounded-3xl bg-white p-6 shadow-soft sm:p-8">
+              <div className="flex gap-0.5 text-amber-500" role="img" aria-label="5 out of 5 stars">{[0, 1, 2, 3, 4].map((i) => <Star key={i} size={18} fill="currentColor" aria-hidden />)}</div>
+              <blockquote className="mt-4 flex-1 leading-relaxed text-ink-body">&ldquo;{r.text}&rdquo;</blockquote>
+              <figcaption className="mt-6 flex items-center gap-3">
+                <span className="grad-crimson grid h-11 w-11 place-items-center rounded-full text-sm font-bold text-white" aria-hidden>{r.name.split(' ').map((w) => w[0]).slice(0, 2).join('')}</span>
+                <span><span className="block font-medium text-ink">{r.name}</span><span className="text-sm text-ink-muted">{r.tag}</span></span>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Faq() {
   return (
     <section id="faq" className="mx-auto grid max-w-6xl 2xl:max-w-7xl gap-8 px-4 py-16 xs:px-5 sm:gap-12 sm:py-24 lg:grid-cols-[1fr_1.6fr]">
@@ -339,7 +364,7 @@ function FinalCta() {
           <p className="mt-5 max-w-md leading-relaxed text-blush-100">Take the first step towards understanding your hair concerns. Submit your details to enquire about hair regrowth and restoration treatments at {CLINIC.name}, {CLINIC.area}.</p>
         </div>
         <div className="relative rounded-3xl bg-ink/90 p-5 backdrop-blur xs:p-6 sm:p-8">
-          <LeadForm id="final" variant="concern" submitLabel="Request a call back" dark />
+          <LeadForm id="final" submitLabel="Request a call back" dark />
         </div>
       </div>
     </section>
@@ -347,28 +372,39 @@ function FinalCta() {
 }
 
 function Footer() {
-  const mapHref = CLINIC.mapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${CLINIC.name}, ${CLINIC.address}`)}`;
+  const mapHref = CLINIC.mapUrl;
   const row = 'flex items-start gap-3';
   const ico = 'mt-0.5 shrink-0';
+  const head = 'mb-1 text-xs font-medium uppercase tracking-[0.22em] text-white';
   return (
     <footer id="contact" className="bg-ink py-12 text-white sm:py-14">
-      <div className="mx-auto grid max-w-6xl 2xl:max-w-7xl gap-8 px-4 xs:px-5 sm:gap-10 md:grid-cols-[1.2fr_1.4fr_1fr]">
+      <div className="mx-auto grid max-w-6xl 2xl:max-w-7xl gap-8 px-4 xs:px-5 sm:gap-10 md:grid-cols-2 lg:grid-cols-[1.1fr_1.3fr_0.8fr_1.2fr]">
         <div>
           <img src={logoUrl} alt={CLINIC.name} className="h-20 w-auto rounded-xl bg-white p-1.5" />
           <p className="mt-5 font-display text-lg font-medium">{CLINIC.name}</p>
+          <p className="mt-2 max-w-xs text-sm leading-relaxed text-white/70">Restore your confidence today with our expert hair care solutions. Book your consultation now!</p>
         </div>
         <div className="space-y-4">
-          <p className="text-xs font-medium uppercase tracking-[0.22em] text-white">Visit us</p>
-          <p className={row}><MapPin size={18} className={ico} aria-hidden /><span>{CLINIC.address}</span></p>
-          {CLINIC.phone && <p className={row}><Phone size={18} className={ico} aria-hidden /><a className="font-medium hover:underline" href={`tel:${CLINIC.phone}`}>{CLINIC.phoneDisplay}</a></p>}
+          <p className={head}>Contact us</p>
+          {CLINIC.address && <p className={row}><MapPin size={18} className={ico} aria-hidden /><span>{CLINIC.address}</span></p>}
+          {CLINIC.phone && <p className={row}><Phone size={18} className={ico} aria-hidden /><a className="font-medium hover:underline" href={`tel:${CLINIC.phone}`} onClick={trackCall}>{CLINIC.phoneDisplay}</a></p>}
           {CLINIC.email && <p className={row}><Mail size={18} className={ico} aria-hidden /><a className="break-all font-medium hover:underline" href={`mailto:${CLINIC.email}`}>{CLINIC.email}</a></p>}
           <a href={mapHref} target="_blank" rel="noopener noreferrer" className={`${btnSolid} !py-2.5 text-sm`}>Get directions <ArrowRight size={16} aria-hidden /></a>
         </div>
         <nav className="flex flex-col gap-2 text-sm font-medium" aria-label="Footer">
-          <p className="mb-1 text-xs font-medium uppercase tracking-[0.22em] text-white">Explore</p>
+          <p className={head}>Explore</p>
           {NAV.filter(([, h]) => h !== '#contact').map(([l, h]) => <a key={h} href={h} className="transition hover:underline">{l}</a>)}
           {CLINIC.privacyUrl && <a href={CLINIC.privacyUrl} className="transition hover:underline">Privacy policy</a>}
         </nav>
+        <div className="md:col-span-2 lg:col-span-1">
+          <p className={head}>Our clinic</p>
+          <p className="mb-3 font-medium">Mogappair</p>
+          {CLINIC.mapEmbedUrl && (
+            <div className="relative aspect-[16/10] overflow-hidden rounded-xl">
+              <iframe src={CLINIC.mapEmbedUrl} title={`${CLINIC.name} location`} loading="lazy" referrerPolicy="strict-origin-when-cross-origin" className="absolute inset-0 h-full w-full border-0" />
+            </div>
+          )}
+        </div>
       </div>
       <p className="mx-auto mt-10 max-w-6xl 2xl:max-w-7xl border-t border-white/10 px-4 pt-6 xs:px-5 text-sm text-white">© {new Date().getFullYear()} {CLINIC.name}. All rights reserved.</p>
     </footer>
@@ -388,6 +424,7 @@ export default function App() {
         <Why />
         <Gallery />
         <Process />
+        <Reviews />
         <Faq />
         <FinalCta />
       </main>

@@ -32,7 +32,7 @@ export default function FormPopup({ onClose }) {
         </button>
         <h2 id="popup-title" className="pr-8 text-2xl font-medium">Book Your Hair Consultation</h2>
         <p className="mb-6 mt-2 text-ink-body">Share your details to enquire about suitable hair treatment options.</p>
-        <LeadForm id="popup" variant="date" submitLabel="Book my consultation" />
+        <LeadForm id="popup" submitLabel="Book my consultation" />
       </div>
     </div>
   );
